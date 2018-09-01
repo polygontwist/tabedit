@@ -16,3 +16,6 @@ th immer oben oder links
 * Datum (tt.mm.jjjj -> jjjj.mm.tt)
 * Drag&Drop
 * Einschänkungen nur oben/links auch rechts/unten berücksichtigen
+
+#### Inspiration ####
+https://www.j-berkemeier.de/TableSort.html
