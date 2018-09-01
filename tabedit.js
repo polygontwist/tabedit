@@ -1,6 +1,6 @@
 "use strict";
 /*
-	Version 0.1
+	Version 0.2
 	
 	Copyright (c) 2018 Andreas Kosmehl
 	MIT License
@@ -172,7 +172,7 @@
 		}
 		
 		var ini=function(){
-			var i,butt,o;
+			var i,butt,o,initobj=undefined;
 			//create Button im th
 			var th=tabelle.getElementsByTagName("th");
 			for(i=0;i<th.length;i++){				
@@ -184,8 +184,10 @@
 					"status":0 //0=n.d. 1=up 2=down
 					};
 				butt.data=o;
+				if(istClass(th[i],"tabeditdefault"))initobj=o;
 				buttons.push(o);
 			}
+			if(initobj!=undefined)sortbyTD(initobj);
 		}		
 		
 		ini();
