@@ -1,6 +1,6 @@
 "use strict";
 /*
-	Version 0.3
+	Version 0.4
 	
 	Copyright (c) 2018 Andreas Kosmehl
 	MIT License
@@ -61,6 +61,45 @@
 	}
 	
 	
+	var konvertdatum=function(s){//Prüfen ob String ein Datum sein könnte
+		var d,tab=s.split('.');
+		
+		if(tab.length==3){
+			if(parseInt(tab[2])>12 || tab[2].length==4){//tt.mm.jjjj  (us: mm.tt.jjjj Erkennung?)
+				d=new Date(tab[2]+"-"+tab[1]+"-"+tab[0]+"T00:00:00.100Z");
+				return d.getTime();//ist Datum
+			}
+			if(parseInt(tab[0])>12 || tab[0].length==4){//jjjj.mm.tt
+				d=new Date(tab[0]+"-"+tab[1]+"-"+tab[2]+"T00:00:00.100Z");
+				return d.getTime();//ist Datum
+			}
+			return s;//ist was anderes			
+		}
+		
+		if(s.split('-').length==3){
+			var s2=s.split('-').join('.');
+			s=konvertdatum(s2);
+		}
+		
+		return s;//ist was anderes
+	}
+	
+	var convertValue=function(s){
+		if(typeof s == "number")return s;
+		if(s=="")return 0;
+		
+		//check Datum
+		s=konvertdatum(s);
+		if(typeof s == "number")return s;
+		
+		//check Zahlen
+		if(!isNaN(s.split(',').join('.')))return parseFloat(s.split(',').join('.')); // 2,5 -> 2.5
+		if(!isNaN(s))return parseFloat(s); // 2.5|2
+		
+		//String
+		return s;
+	}
+	
 	//Tabellenobjekt 
 	var initab=function(tabelle){
 		var buttons=[];
@@ -107,28 +146,23 @@
 			}
 		}
 		
-		
-		var tabsrtup=function(a,b){
-			//wenn eines eine Zahl ist und das andere leer, leere auf 0 setzen
-			if(a.sortvalue==="" && !isNaN(b.sortvalue))a.sortvalue=0;
-			if(b.sortvalue==="" && !isNaN(a.sortvalue))b.sortvalue=0;
-			
-			var isnumbers=!(isNaN(a.sortvalue) || isNaN(b.sortvalue));			
+		var sortieren=function(a,b){
+			var isnumbers=(typeof a=="number" && typeof b=="number");			
 			if(isnumbers)
 			{	//Zahlensort
-				if( parseFloat(a.sortvalue)<parseFloat(b.sortvalue) )return -1
+				if( a<b )return -1;
 				else
-				if( parseFloat(a.sortvalue)>parseFloat(b.sortvalue) )return 1
+				if( a>b )return 1;
 				else
 				return 0;
 			}
 			else
-				return a.sortvalue.toLowerCase().localeCompare(b.sortvalue.toLowerCase());
+				if(typeof a == "string" && typeof b == "string" )
+					return a.toLowerCase().localeCompare(b.toLowerCase());
+				
+			return 0;
 		}
-		var tabsrtdown=function(a,b){
-			//tabsrtup gegenteilig nutzen
-			return tabsrtup(b,a);
-		}
+		
 		var sortTablebyTD=function(nr,isup){
 			var i,node,tr,td,
 				zeilen=tabelle.getElementsByTagName("tr"),
@@ -137,12 +171,22 @@
 				;
 			if(isup==undefined)isup=true;
 			
+			var tabsrtup=function(a,b){
+				var aa=a.sortvalue;
+				var bb=b.sortvalue;
+				return sortieren(aa,bb);
+			}
+			var tabsrtdown=function(a,b){
+				//tabsrtup gegenteilig nutzen
+				return tabsrtup(b,a);
+			}
+			
 			//zu sortierende Elemente sammeln
 			for(i=0;i<zeilen.length;i++){
 				tr=zeilen[i];
 				td=tr.getElementsByTagName("td")[nr];
 				if(td!=undefined){
-					zeilenlist.push({"node":tr,"sortvalue":td.innerHTML});
+					zeilenlist.push({"node":tr,"sortvalue":convertValue(td.innerHTML)});
 				}
 			}
 			
@@ -164,7 +208,6 @@
 			}
 		}
 		
-		
 		var sortTablebyTR=function(nr,isup){
 			var i,t,node,tr,td,
 				zeilen=tabelle.getElementsByTagName("tr"),
@@ -176,21 +219,9 @@
 			
 			//inline wegen nr
 			var tabsrtleft=function(a,b){
-				//wenn eines eine Zahl ist und das andere leer, leere auf 0 setzen
-				if(a.tds[nr].sortvalue==="" && !isNaN(b.tds[nr].sortvalue))a.sortvalue=0;
-				if(b.tds[nr].sortvalue==="" && !isNaN(a.tds[nr].sortvalue))b.tds[nr].sortvalue=0;
-				
-				var isnumbers=!(isNaN(a.tds[nr].sortvalue) || isNaN(b.tds[nr].sortvalue));			
-				if(isnumbers)
-				{	//Zahlensort
-					if( parseFloat(a.tds[nr].sortvalue)<parseFloat(b.tds[nr].sortvalue) )return -1
-					else
-					if( parseFloat(a.tds[nr].sortvalue)>parseFloat(b.tds[nr].sortvalue) )return 1
-					else
-					return 0;
-				}
-				else
-					return a.tds[nr].sortvalue.toLowerCase().localeCompare(b.tds[nr].sortvalue.toLowerCase());
+				var aa=a.tds[nr].sortvalue;
+				var bb=b.tds[nr].sortvalue;
+				return sortieren(aa,bb);
 			}
 			
 			var tabsrtright=function(a,b){
@@ -203,10 +234,10 @@
 				tds=zeilen[i].getElementsByTagName("td");
 				for(t=0;t<tds.length;t++){
 					if(i==0){
-						ospalten.push( {"tds":[ {"node":tds[t],sortvalue:tds[t].innerHTML} ] ,"nr":t} );
+						ospalten.push( {"tds":[ {"node":tds[t],sortvalue:convertValue(tds[t].innerHTML)} ] ,"nr":t} );
 					}else{
 						
-						ospalten[t].tds.push( {"node":tds[t],sortvalue:tds[t].innerHTML} );
+						ospalten[t].tds.push( {"node":tds[t],sortvalue:convertValue(tds[t].innerHTML)} );
 					}
 				}
 			}
