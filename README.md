@@ -1,7 +1,7 @@
 Ein Script was HTML-Tabellen sortierbar macht.
 
 #### Beispiel ####
-ausprobieren: https://rawgit.com/polygontwist/tabedit/master/exampel.htm
+ausprobieren: https://rawgit.com/polygontwist/tabedit/master/example.htm
 
 
 #### Einstellungen ####
