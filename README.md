@@ -11,7 +11,7 @@ Hat ein th die Classe "tabeditdefault" wird die Tabelle mit dieser Spalte vorsor
 th immer oben oder links
 
 #### TODO ####
-* initialsortierung [OK]
-* Spaltenweises sortieren [OK]
+* initialsortierung: Version 0.2 [OK]
+* Spaltenweises sortieren: Version 0.3 [OK]
 * Drag&Drop
 * Einschänkungen nur oben/links auch rechts/unten berücksichtigen
