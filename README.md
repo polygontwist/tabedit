@@ -13,6 +13,7 @@ th immer oben oder links
 #### TODO ####
 * initialsortierung: Version 0.2 [OK]
 * Spaltenweises sortieren: Version 0.3 [OK]
+* Zahlen Kommawerte "2,3" -> "2.3"
 * Datum (tt.mm.jjjj -> jjjj.mm.tt)
 * Drag&Drop
 * Einschänkungen nur oben/links auch rechts/unten berücksichtigen
