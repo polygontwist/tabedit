@@ -1,6 +1,6 @@
 "use strict";
 /*
-	Version 0.2
+	Version 0.3
 	
 	Copyright (c) 2018 Andreas Kosmehl
 	MIT License
@@ -8,10 +8,13 @@
  
  
  var tabedit=function(){
-	var zeichen={
-		up:"▼",
-		down:"▲",
-		updown:"▲▼"		//nicht ausgewählt
+	var zeichen={		//https://www.w3schools.com/charsets/ref_utf_geometric.asp
+		up:"▼",			//&#9660;
+		down:"▲",		//&#9650;
+		updown:"▲▼",	//nicht ausgewählt
+		right:"►",		// &#9658;
+		left:"◄",		// &#9668;
+		rightleft:"◄►"	
 	};
 	
 	//Basics
@@ -73,22 +76,37 @@
 			var i,o,s;
 			for(i=0;i<buttons.length;i++){
 				o=buttons[i];
-				switch(o.status){
-					case 0:
-						s=zeichen.updown;
-						break;
-					case 1:
-						s=zeichen.up;
-						break;
-					case 2:
-						s=zeichen.down;
-						break;
+				if(o.richtung=="row"){
+					switch(o.status){
+						case 0:
+							s=zeichen.updown;
+							break;
+						case 1:
+							s=zeichen.up;
+							break;
+						case 2:
+							s=zeichen.down;
+							break;
+					}
+				}else{
+					switch(o.status){
+						case 0:
+							s=zeichen.rightleft;
+							break;
+						case 1:
+							s=zeichen.right;
+							break;
+						case 2:
+							s=zeichen.left;
+							break;
+					}
 				}
 				o.butt.innerHTML=s;
 				subClass(o.butt,"tabeditbaktiv")
 				if(o.status>0)addClass(o.butt,"tabeditbaktiv")
 			}
 		}
+		
 		
 		var tabsrtup=function(a,b){
 			//wenn eines eine Zahl ist und das andere leer, leere auf 0 setzen
@@ -107,12 +125,10 @@
 			else
 				return a.sortvalue.toLowerCase().localeCompare(b.sortvalue.toLowerCase());
 		}
-		
 		var tabsrtdown=function(a,b){
 			//tabsrtup gegenteilig nutzen
 			return tabsrtup(b,a);
 		}
-				
 		var sortTablebyTD=function(nr,isup){
 			var i,node,tr,td,
 				zeilen=tabelle.getElementsByTagName("tr"),
@@ -147,8 +163,79 @@
 				parentnode.appendChild(zeilenlist[i].node);
 			}
 		}
+		
+		
+		var sortTablebyTR=function(nr,isup){
+			var i,t,node,tr,td,
+				zeilen=tabelle.getElementsByTagName("tr"),
+				spaltenlist=[],
+				parentnode,
+				tds
+				;
+			if(isup==undefined)isup=true;
+			
+			//inline wegen nr
+			var tabsrtleft=function(a,b){
+				//wenn eines eine Zahl ist und das andere leer, leere auf 0 setzen
+				if(a.tds[nr].sortvalue==="" && !isNaN(b.tds[nr].sortvalue))a.sortvalue=0;
+				if(b.tds[nr].sortvalue==="" && !isNaN(a.tds[nr].sortvalue))b.tds[nr].sortvalue=0;
 				
-		var sortbyTD=function(dat){
+				var isnumbers=!(isNaN(a.tds[nr].sortvalue) || isNaN(b.tds[nr].sortvalue));			
+				if(isnumbers)
+				{	//Zahlensort
+					if( parseFloat(a.tds[nr].sortvalue)<parseFloat(b.tds[nr].sortvalue) )return -1
+					else
+					if( parseFloat(a.tds[nr].sortvalue)>parseFloat(b.tds[nr].sortvalue) )return 1
+					else
+					return 0;
+				}
+				else
+					return a.tds[nr].sortvalue.toLowerCase().localeCompare(b.tds[nr].sortvalue.toLowerCase());
+			}
+			
+			var tabsrtright=function(a,b){
+				return tabsrtleft(b,a);
+			}
+			
+			//zu sortierende Elemente sammeln
+			var ospalten=[];
+			for(i=0;i<zeilen.length;i++){
+				tds=zeilen[i].getElementsByTagName("td");
+				for(t=0;t<tds.length;t++){
+					if(i==0){
+						ospalten.push( {"tds":[ {"node":tds[t],sortvalue:tds[t].innerHTML} ] ,"nr":t} );
+					}else{
+						
+						ospalten[t].tds.push( {"node":tds[t],sortvalue:tds[t].innerHTML} );
+					}
+				}
+			}
+			
+			//entfernen
+			for(t=0;t<ospalten.length;t++)
+			for(i=0;i<ospalten[t].tds.length;i++){
+				node=ospalten[t].tds[i].node;
+				node.parentNode.removeChild(node);
+			}
+			
+			//sortieren
+			if(isup)
+				ospalten.sort(tabsrtleft);
+			else
+				ospalten.sort(tabsrtright);
+			
+			//einfügen
+			for(i=0;i<ospalten.length;i++){
+				for(t=0;t<ospalten[i].tds.length;t++){
+					parentnode=zeilen[t];
+					parentnode.appendChild(ospalten[i].tds[t].node);
+				}
+			}
+		}
+			
+		
+		
+		var sortby=function(dat){
 			var s;
 			resetButtStat(dat.nr);
 			
@@ -162,32 +249,43 @@
 				dat.status=1;
 			
 			setButtStat();
-			
-			sortTablebyTD(dat.nr,dat.status==1);
+			if(dat.richtung=="row")
+				sortTablebyTD(dat.nr,dat.status==1);
+			else
+				sortTablebyTR(dat.nr,dat.status==1);
 		}
 				
 		var clickbutt=function(e){
-			sortbyTD(e.target.data);
+			sortby(e.target.data);
 			e.preventDefault();
 		}
 		
 		var ini=function(){
-			var i,butt,o,initobj=undefined;
+			var i,butt,o,initobj=undefined,tr,richtung="row";
 			//create Button im th
 			var th=tabelle.getElementsByTagName("th");
+			
+			//row or col?
+			var tr=tabelle.getElementsByTagName("tr")[0],
+				iscol=tr.getElementsByTagName("th").length==1;
+						
+			if(iscol)richtung="col";
+			
 			for(i=0;i<th.length;i++){				
 				butt=cE(th[i],"button",undefined,"tabeditbutt");
-				butt.innerHTML=zeichen.updown;
 				butt.addEventListener('click',clickbutt);
 				o={ "butt":butt,
 					"nr":i,
-					"status":0 //0=n.d. 1=up 2=down
+					"status":0, 			//0=n.d. 1=up|left 2=down|right
+					"richtung":richtung		//"row"|"col"
 					};
 				butt.data=o;
 				if(istClass(th[i],"tabeditdefault"))initobj=o;
 				buttons.push(o);
 			}
-			if(initobj!=undefined)sortbyTD(initobj);
+			setButtStat();
+			if(initobj!=undefined)sortby(initobj);
+			
 		}		
 		
 		ini();
@@ -195,9 +293,8 @@
 	
 	//Seiteninit
 	var ini=function(){
-		var i;
-		var tabs=document.getElementsByClassName("tabeditrow");
-		
+		var i,
+			tabs=document.getElementsByClassName("tabedit");
 		for(i=0;i<tabs.length;i++){
 			new initab(tabs[i]);
 		}
