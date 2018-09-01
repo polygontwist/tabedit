@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+	<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, minimal-ui">
+	<title>TabEdit</title>
+
+	<style>
+		body {
+			font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+		}
+		
+		table{
+			border-collapse: collapse;
+			width: 100%;
+			margin-bottom:10px;
+		}
+
+		td, th {
+			border: 1px solid #ddd;
+			padding: 8px;
+		}
+
+		tr:nth-child(even){background-color: #f2f2f2;}
+
+		/*tr:hover {background-color: #ddd;}*/
+
+		th {
+			padding-top: 12px;
+			padding-bottom: 12px;
+			text-align: left;
+			background-color: #4C85AF;
+			color: white;
+		}
+		
+		.tabgreen{
+			width: 80%;
+		}
+		.tabgreen th{background-color: #41b550;}
+		
+		
+		/*tabedit css*/
+		.tabeditbutt{
+			float:right;
+			background-color: transparent;
+			border: 0;
+			cursor:pointer;
+			padding:0;
+			color:white;						/*color*/
+			width:36px;
+			text-align:center;
+			box-sizing: border-box;
+		}
+		.tabeditbutt:active{
+			/*padding:0 10px;*/
+		}
+		.tabeditbaktiv{
+			text-shadow: 0px 0px 5px rgba(0, 0, 0, 1);
+		}
+		
+		
+		
+		/*andere Button-Position*/
+		.tabgreen .tabeditbutt{
+			float:left;
+		}
+		.tabgreen td, .tabgreen th {
+			padding: 4px;
+		}
+		
+	</style>
+	<script src="tabedit.js"></script>
+	
+</head>
+
+<body>
+<h1>TableEdit</h1>
+<table class="tabeditrow">
+	 <tr>
+		<th>Buchstabe</th>
+		<th>Zahlen</th>
+		<th>Dinge</th>
+	  </tr>
+	<tr>
+		<td>b</td>
+		<td>4</td>
+		<td>Appel</td>
+	</tr>
+	<tr>
+		<td>A</td>
+		<td>3</td>
+		<td>1.Birne</td>
+	</tr>
+	<tr>
+		<td>C</td>
+		<td>5</td>
+		<td>2.Birne</td>
+	</tr>
+	<tr>
+		<td>D</td>
+		<td>2</td>
+		<td>Bus</td>
+	</tr>
+	<tr>
+		<td>E</td>
+		<td>1</td>
+		<td>Kegel</td>
+	</tr>
+</table>
+
+<table class="tabeditrow tabgreen">
+	 <tr>
+		<th>Fahrzeuge</th>
+		<th>Farbe</th>
+		<th>Hubraum (cm³)</th>
+		<th>Gewicht (kg)</th>
+	  </tr>
+	<tr>
+		<td>Auto</td>
+		<td>rot</td>
+		<td>1800</td>
+		<td>2000</td>
+	</tr>
+	<tr>
+		<td>Fahrrad</td>
+		<td>grau</td>
+		<td></td>
+		<td>8</td>
+	</tr>
+	<tr>
+		<td>Motorad</td>
+		<td>amber</td>
+		<td>494</td>
+		<td>122</td>
+	</tr>
+	<tr>
+		<td>LKW</td>
+		<td>grün</td>
+		<td>2330</td>
+		<td>14500</td>
+	</tr>
+</table>
+
+</body>
+</html>
