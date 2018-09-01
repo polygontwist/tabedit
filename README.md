@@ -5,5 +5,6 @@ ausprobieren: https://rawgit.com/polygontwist/tabedit/master/exampel.htm
 
 
 #### TODO ####
+* initialsortierung
 * Spaltenweises sortieren
 * Drag&Drop
