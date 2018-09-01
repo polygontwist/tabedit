@@ -5,7 +5,7 @@ ausprobieren: https://rawgit.com/polygontwist/tabedit/master/example.htm
 
 
 #### Einstellungen ####
-Hat ein th die Classe "tabeditdefault" wird die Tabelle mit dieser Spalte vorsortiert.
+Hat ein th die Classe "tabeditdefault" wird die Tabelle mit dieser Spalte/Zeile vorsortiert.
 
 #### Einschänkungen ####
 th immer oben oder links
