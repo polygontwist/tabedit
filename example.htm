@@ -23,6 +23,9 @@
 
 		tr:nth-child(even){background-color: #f2f2f2;}
 
+		.spalten tr:nth-child(even){background-color:transparent;}
+		.spalten td:nth-child(even){background-color:#f2f2f2;}
+		
 		/*tr:hover {background-color: #ddd;}*/
 
 		th {
@@ -141,7 +144,7 @@
 	</tr>
 </table>
 
-<table class="tabedit">
+<table class="tabedit spalten">
 	 <tr>
 		<th style="width:180px">Fahrzeuge</th>
 		<td>Auto</td>
@@ -151,10 +154,10 @@
 	  </tr>
 	<tr>
 		<th class="tabeditdefault">Farbe</th>
-		<td>rot</td>
-		<td>grau</td>
-		<td>amber</td>
-		<td>grün</td>
+		<td style="color:red;">rot</td>
+		<td style="color:gray;">grau</td>
+		<td style="color:#bfbf1a;">amber</td>
+		<td style="color:green;">grün</td>
 	</tr>
 	<tr>
 		<th>Hubraum (cm³)</th>
