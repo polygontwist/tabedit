@@ -11,10 +11,17 @@
 	var zeichen={		//https://www.w3schools.com/charsets/ref_utf_geometric.asp
 		up:"▼",			//&#9660;
 		down:"▲",		//&#9650;
-		updown:"▲▼",	//nicht ausgewählt
+		updown:"▲▼",	//nicht ausgewählt (Splaten)
 		right:"►",		// &#9658;
 		left:"◄",		// &#9668;
-		rightleft:"◄►"	
+		rightleft:"◄►"	//nicht ausgewählt (Zeilen)
+	};
+	
+	var csskeywords={
+		sortclass	:"tabedit",			//auf table ->Tabelle bekommt Sortierfunktionalität
+		sortdefault	:"tabeditdefault",	//auf th	->diese Spalte/Zeile wird vorsortiert
+		editbutt	:"tabeditbutt",		//auf button->Standard-CSS
+		sortaktiv	:"tabeditbaktiv"	//auf button->Sortierungsbutton aktiv
 	};
 	
 	//Basics
@@ -35,7 +42,6 @@
 			htmlNode.className=newClass;
 		}			
 	}
-	 
 	var subClass=function(htmlNode,Classe){
 			var aClass,i;
 			if(htmlNode!=undefined && htmlNode.className!=undefined){
@@ -141,8 +147,8 @@
 					}
 				}
 				o.butt.innerHTML=s;
-				subClass(o.butt,"tabeditbaktiv")
-				if(o.status>0)addClass(o.butt,"tabeditbaktiv")
+				subClass(o.butt,csskeywords.sortaktiv)
+				if(o.status>0)addClass(o.butt,csskeywords.sortaktiv)
 			}
 		}
 		
@@ -159,7 +165,7 @@
 			else
 				if(typeof a == "string" && typeof b == "string" )
 					return a.toLowerCase().localeCompare(b.toLowerCase());
-				
+			
 			return 0;
 		}
 		
@@ -303,7 +309,7 @@
 			if(iscol)richtung="col";
 			
 			for(i=0;i<th.length;i++){				
-				butt=cE(th[i],"button",undefined,"tabeditbutt");
+				butt=cE(th[i],"button",undefined,csskeywords.editbutt);
 				butt.addEventListener('click',clickbutt);
 				o={ "butt":butt,
 					"nr":i,
@@ -311,7 +317,7 @@
 					"richtung":richtung		//"row"|"col"
 					};
 				butt.data=o;
-				if(istClass(th[i],"tabeditdefault"))initobj=o;
+				if(istClass(th[i],csskeywords.sortdefault))initobj=o;
 				buttons.push(o);
 			}
 			setButtStat();
@@ -325,7 +331,7 @@
 	//Seiteninit
 	var ini=function(){
 		var i,
-			tabs=document.getElementsByClassName("tabedit");
+			tabs=document.getElementsByClassName(csskeywords.sortclass);
 		for(i=0;i<tabs.length;i++){
 			new initab(tabs[i]);
 		}
